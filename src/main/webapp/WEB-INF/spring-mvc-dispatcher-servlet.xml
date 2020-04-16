@@ -1,0 +1,109 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	                       http://www.springframework.org/schema/context 
+	                       http://www.springframework.org/schema/context/spring-context-3.1.xsd
+						   http://www.springframework.org/schema/tx 
+						   http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+						   http://www.springframework.org/schema/mvc 
+						   http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+        
+        
+	<!-- Paquete de componentes para spring -->
+	<context:component-scan base-package="com.rms.recreativos" />
+
+	<!-- Configuracion de resolucion de vistas -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">		
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:config.properties"/>
+	</bean>
+	
+	<bean id="PropertiesService" class="com.rms.recreativos.service.PropertiesService">
+        <property name="jdbcUrl" value="${jdbc.url}" />  
+        <property name="jdbcUsername" value="${jdbc.username}" />  
+        <property name="jdbcPassword" value="${jdbc.password}" />
+        <property name="rutaFicherosTicket" value="${rutaFicherosTicket}" />  	 	
+	</bean>
+	
+	<bean id="RecreativosServiceImpl" class="com.rms.recreativos.service.RecreativosService">
+	</bean>
+
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="100" />
+        <property name="maxIdle" value="50" />
+        <property name="minIdle" value="10" />
+        <property name="validationQuery" value="SELECT 1" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
+
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="dataSource" />
+    </bean>
+          
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.rms.recreativos.entity" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="show_sql">true</prop>
+				<prop key="hbm2ddl.auto">none</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>  
+		</property>
+    </bean>
+    
+    <!-- bean id="sessionInterceptor" class="com.rms.recreativos.interceptor.SessionInterceptor"/-->
+    <mvc:interceptors>
+		<mvc:interceptor>
+    		<mvc:mapping path="/**"/>
+    		<bean class="com.rms.recreativos.interceptor.SessionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- Instructs the container to look for beans with @Transactional and decorate them -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ 
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${smtp.host}" />
+		<property name="port" value="${smtp.port}" />
+		<property name="username" value="${smtp.username}" />
+		<property name="password" value="${smtp.password}" />	
+		<property name="javaMailProperties">
+		   <props>
+	       	      <prop key="mail.smtp.auth">true</prop>
+	       	      <prop key="mail.smtp.starttls.enable">true</prop>
+	       	   </props>
+		</property>
+	</bean>
+	
+	<bean id="mailUtil" class="com.rms.recreativos.mail.MailUtil">
+		<property name="mailSender" ref="mailSender" />
+		<property name="simpleMailMessage" ref="mailMessageTicket" />
+	</bean>
+	
+	<bean id="mailMessageTicket" class="org.springframework.mail.SimpleMailMessage">
+		<property name="from" value="${email.from}" />
+		<property name="to" value="${email.to}" />
+	</bean>
+</beans>

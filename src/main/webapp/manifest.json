@@ -1,0 +1,37 @@
+{
+  "name": "Montamaquinas",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./img/tragaperras_icon_36x36.png",
+      "sizes": "36x36"
+    },
+    {
+      "src": "./img/tragaperras_icon_48x48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "./img/tragaperras_icon_72x72.png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "./img/tragaperras_icon_16x16.png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "./img/tragaperras_icon_152x152.png",
+      "sizes": "152x152"
+    },
+    {
+      "src": "./img/tragaperras_icon_192x192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./img/tragaperras_icon_196x196.png",
+      "sizes": "196x196"
+    }
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "lang": "es"
+}
