@@ -1,0 +1,11 @@
+jdbc.url=jdbc:mysql://localhost:3306/gestrecreativas?autoReconnect=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
+jdbc.username=<Database UserName>
+jdbc.password=<Database Password>
+smtp.host=smtp.gmail.com
+smtp.port=587
+smtp.username=<gmail Username>
+smtp.password=<gmail password>
+email.from=<gmail Username>@gmail.com
+email.to=
+#rutaFicherosTicket=/opt/tomcat/TICKETS
+rutaFicherosTicket=\\tikets
